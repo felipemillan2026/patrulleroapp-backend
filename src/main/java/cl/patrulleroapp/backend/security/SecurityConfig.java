@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -32,6 +33,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -47,15 +49,14 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of(
-            "http://localhost:5173",
-            "https://endearing-lokum-fdbb56.netlify.app"
-       ));
-       config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-       config.setAllowedHeaders(List.of("*"));
-       config.setAllowCredentials(true);
-       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-       source.registerCorsConfiguration("/**", config);
-       return source;
+        config.setAllowedOriginPatterns(Arrays.asList("*"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setExposedHeaders(Arrays.asList("Authorization"));
+        config.setAllowCredentials(false);
+        config.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }
