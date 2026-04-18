@@ -12,4 +12,5 @@ public class SolicitudRequest {
     private String direccion;
     private Integer idDepartamento;
     private List<Integer> idTiposCaso;
+    private List<String> urlsImagenes;
 }

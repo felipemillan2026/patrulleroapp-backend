@@ -19,6 +19,7 @@ public class SolicitudService {
     private final TurnoRepository turnoRepository;
     private final DepartamentoRepository departamentoRepository;
     private final TipoCasoRepository tipoCasoRepository;
+    private final ImagenRepository imagenRepository;
 
     public SolicitudResponse crearSolicitud(SolicitudRequest request) {
         String email = SecurityContextHolder.getContext()
@@ -50,6 +51,17 @@ public class SolicitudService {
         solicitud.setDepartamento(departamento);
         solicitud.setTiposCaso(tiposCaso);
         solicitudRepository.save(solicitud);
+
+        // Guardar imágenes
+        if (request.getUrlsImagenes() != null && !request.getUrlsImagenes().isEmpty()) {
+            for (String url : request.getUrlsImagenes()) {
+                Imagen imagen = new Imagen();
+                imagen.setUrlFirebase(url);
+                imagen.setFechaSubida(LocalDateTime.now());
+                imagen.setSolicitud(solicitud);
+                imagenRepository.save(imagen);
+            }
+        }
 
         return toResponse(solicitud);
     }
@@ -83,28 +95,28 @@ public class SolicitudService {
     }
 
     private SolicitudResponse toResponse(Solicitud s) {
-    List<String> tiposCaso = List.of();
-    try {
-        if (s.getTiposCaso() != null) {
-            tiposCaso = s.getTiposCaso().stream()
-                .map(TipoCaso::getDescripcion)
-                .toList();
+        List<String> tiposCaso = List.of();
+        try {
+            if (s.getTiposCaso() != null) {
+                tiposCaso = s.getTiposCaso().stream()
+                    .map(TipoCaso::getDescripcion)
+                    .toList();
+            }
+        } catch (Exception e) {
+            tiposCaso = List.of();
         }
-    } catch (Exception e) {
-        tiposCaso = List.of();
-    }
 
-    return new SolicitudResponse(
-        s.getIdSolicitud(),
-        s.getDescripcion(),
-        s.getEstado(),
-        s.getFechaHora(),
-        s.getDireccion(),
-        s.getLatitud(),
-        s.getLongitud(),
-        s.getPatrullero().getNombre() + " " + s.getPatrullero().getApellido(),
-        s.getDepartamento().getNombre(),
-        tiposCaso
-    );
-}
+        return new SolicitudResponse(
+            s.getIdSolicitud(),
+            s.getDescripcion(),
+            s.getEstado(),
+            s.getFechaHora(),
+            s.getDireccion(),
+            s.getLatitud(),
+            s.getLongitud(),
+            s.getPatrullero().getNombre() + " " + s.getPatrullero().getApellido(),
+            s.getDepartamento().getNombre(),
+            tiposCaso
+        );
+    }
 }
