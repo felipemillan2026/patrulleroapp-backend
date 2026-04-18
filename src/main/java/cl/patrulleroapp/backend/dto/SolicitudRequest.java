@@ -13,4 +13,5 @@ public class SolicitudRequest {
     private Integer idDepartamento;
     private List<Integer> idTiposCaso;
     private List<String> urlsImagenes;
+    private boolean notificarEmail;
 }

@@ -49,4 +49,14 @@ public class SolicitudController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editarSolicitud(
+            @PathVariable Integer id,
+            @RequestBody SolicitudRequest request) {
+        try {
+            return ResponseEntity.ok(solicitudService.editarSolicitud(id, request));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+    }   }
 }

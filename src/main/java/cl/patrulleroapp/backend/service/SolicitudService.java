@@ -20,6 +20,7 @@ public class SolicitudService {
     private final DepartamentoRepository departamentoRepository;
     private final TipoCasoRepository tipoCasoRepository;
     private final ImagenRepository imagenRepository;
+    private final EmailService emailService;
 
     public SolicitudResponse crearSolicitud(SolicitudRequest request) {
         String email = SecurityContextHolder.getContext()
@@ -52,7 +53,49 @@ public class SolicitudService {
         solicitud.setTiposCaso(tiposCaso);
         solicitudRepository.save(solicitud);
 
-        // Guardar imágenes
+        if (request.getUrlsImagenes() != null && !request.getUrlsImagenes().isEmpty()) {
+            for (String url : request.getUrlsImagenes()) {
+                Imagen imagen = new Imagen();
+                imagen.setUrlFirebase(url);
+                imagen.setFechaSubida(LocalDateTime.now());
+                imagen.setSolicitud(solicitud);
+                imagenRepository.save(imagen);
+            }
+        }
+
+        if (request.isNotificarEmail()) {
+            emailService.enviarNotificacionSolicitud(solicitud);
+        }
+
+        return toResponse(solicitud);
+    }
+
+    public SolicitudResponse editarSolicitud(Integer id, SolicitudRequest request) {
+        String email = SecurityContextHolder.getContext()
+            .getAuthentication().getName();
+        Usuario patrullero = usuarioRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Solicitud solicitud = solicitudRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+
+        if (!solicitud.getPatrullero().getIdUsuario().equals(patrullero.getIdUsuario())) {
+            throw new RuntimeException("No puedes editar una solicitud de otro patrullero");
+        }
+
+        solicitud.setDescripcion(request.getDescripcion());
+        solicitud.setDireccion(request.getDireccion());
+
+        if (request.getIdTiposCaso() != null && !request.getIdTiposCaso().isEmpty()) {
+            List<TipoCaso> tiposCaso = request.getIdTiposCaso().stream()
+                .map(tcId -> tipoCasoRepository.findById(tcId)
+                    .orElseThrow(() -> new RuntimeException("Tipo de caso no encontrado")))
+                .toList();
+            solicitud.setTiposCaso(tiposCaso);
+        }
+
+        solicitudRepository.save(solicitud);
+
         if (request.getUrlsImagenes() != null && !request.getUrlsImagenes().isEmpty()) {
             for (String url : request.getUrlsImagenes()) {
                 Imagen imagen = new Imagen();
