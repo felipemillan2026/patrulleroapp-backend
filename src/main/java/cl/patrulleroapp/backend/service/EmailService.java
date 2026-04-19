@@ -17,18 +17,21 @@ public class EmailService {
     private static final DateTimeFormatter FMT =
         DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-    public void enviarNotificacionSolicitud(Solicitud solicitud) {
+    public void enviarNotificacionSolicitud(Solicitud solicitud, String emailDestino) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            String correoDestino = solicitud.getDepartamento().getCorreoDestino();
-            String departamento  = solicitud.getDepartamento().getNombre();
-            String patrullero    = solicitud.getPatrullero().getNombre() + " "
-                                 + solicitud.getPatrullero().getApellido();
+            String correo = (emailDestino != null && !emailDestino.isEmpty())
+                ? emailDestino
+                : solicitud.getDepartamento().getCorreoDestino();
+
+            String departamento = solicitud.getDepartamento().getNombre();
+            String patrullero   = solicitud.getPatrullero().getNombre() + " "
+                                + solicitud.getPatrullero().getApellido();
 
             helper.setFrom("rohirrimfelipe666@gmail.com");
-            helper.setTo(correoDestino);
+            helper.setTo(correo);
             helper.setSubject("🛡️ Nueva solicitud de procedimiento — PatrulleroApp");
 
             String html = """
@@ -39,9 +42,9 @@ public class EmailService {
                   </div>
                   <div style="background:#f8fafc;padding:24px;border:1px solid #e5e7eb;">
                     <h2 style="color:#1a2b4a;margin-top:0;">Nueva solicitud de procedimiento</h2>
-                    <table style="width:100%;border-collapse:collapse;">
+                    <table style="width:100%%;border-collapse:collapse;">
                       <tr>
-                        <td style="padding:8px;background:#eef2ff;font-weight:bold;width:35%;">N° Solicitud</td>
+                        <td style="padding:8px;background:#eef2ff;font-weight:bold;width:35%%;">N° Solicitud</td>
                         <td style="padding:8px;background:#f8fafc;">#%d</td>
                       </tr>
                       <tr>

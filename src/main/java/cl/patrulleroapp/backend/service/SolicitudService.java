@@ -64,7 +64,7 @@ public class SolicitudService {
         }
 
         if (request.isNotificarEmail()) {
-            emailService.enviarNotificacionSolicitud(solicitud);
+            emailService.enviarNotificacionSolicitud(solicitud, request.getEmailDestino());
         }
 
         return toResponse(solicitud);
@@ -149,6 +149,17 @@ public class SolicitudService {
             tiposCaso = List.of();
         }
 
+        List<String> urlsImagenes = List.of();
+        try {
+            List<Imagen> imagenes = imagenRepository
+                .findBySolicitud_IdSolicitud(s.getIdSolicitud());
+            urlsImagenes = imagenes.stream()
+                .map(Imagen::getUrlFirebase)
+                .toList();
+        } catch (Exception e) {
+            urlsImagenes = List.of();
+        }
+
         return new SolicitudResponse(
             s.getIdSolicitud(),
             s.getDescripcion(),
@@ -159,7 +170,8 @@ public class SolicitudService {
             s.getLongitud(),
             s.getPatrullero().getNombre() + " " + s.getPatrullero().getApellido(),
             s.getDepartamento().getNombre(),
-            tiposCaso
+            tiposCaso,
+            urlsImagenes
         );
     }
 }

@@ -19,4 +19,5 @@ public class SolicitudResponse {
     private String patrulleroNombre;
     private String departamentoNombre;
     private List<String> tiposCaso;
+    private List<String> urlsImagenes;
 }
