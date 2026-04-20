@@ -63,7 +63,8 @@ public class SecurityConfig {
             "http://localhost:5173",
             "https://endearing-lokum-fdbb56.netlify.app",
             "https://patrulleroapp.netlify.app",
-            "https://*.netlify.app"
+            "https://*.netlify.app",
+            "https://*.vercel.app"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
