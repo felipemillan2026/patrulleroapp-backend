@@ -61,11 +61,12 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(List.of(
             "http://localhost:5173",
-            "https://endearing-lokum-fdbb56.netlify.app",
             "https://patrulleroapp.netlify.app",
             "https://*.netlify.app",
-            "https://*.vercel.app"
-        ));
+            "https://*.vercel.app",
+            "https://patrulleroapp-frontend.vercel.app",
+            "https://patrulleroapp-frontend-felipemillan2026s-projects.vercel.app"
+   ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
