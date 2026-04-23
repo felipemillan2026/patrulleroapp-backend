@@ -8,6 +8,6 @@ import java.util.Optional;
 public interface TurnoRepository extends JpaRepository<Turno, Integer> {
     Optional<Turno> findByEstado(String estado);
 
-    @Query("SELECT t FROM Turno t WHERE t.estado = 'cerrado' ORDER BY t.fechaCierre DESC")
+    @Query("SELECT t FROM Turno t WHERE t.estado = 'cerrado' ORDER BY t.fechaCierre DESC LIMIT 1")
     Optional<Turno> findUltimoCerrado();
 }
