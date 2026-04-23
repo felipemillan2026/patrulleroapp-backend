@@ -33,3 +33,4 @@ build/
 
 # Credenciales
 src/main/resources/application.properties
+target/
