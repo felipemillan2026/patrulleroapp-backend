@@ -25,6 +25,9 @@ public class Solicitud {
     @Column(name = "estado", nullable = false, length = 30)
     private String estado = "pendiente";
 
+    @Column(columnDefinition = "TEXT")
+    private String notas;
+
     @Column(name = "latitud", precision = 10, scale = 7)
     private BigDecimal latitud;
 

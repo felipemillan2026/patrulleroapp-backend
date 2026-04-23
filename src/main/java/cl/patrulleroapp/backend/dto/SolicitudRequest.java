@@ -15,4 +15,6 @@ public class SolicitudRequest {
     private List<String> urlsImagenes;
     private boolean notificarEmail;
     private String emailDestino;
+    private String notas;
+    private Integer idPatrullero;
 }

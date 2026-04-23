@@ -8,9 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -160,7 +162,8 @@ public class ReporteService {
 
                     for (Imagen imagen : imagenes) {
                         try {
-                            URL imgUrl = new URL(imagen.getUrlFirebase());
+                            URI imgUri = new URI(imagen.getUrlFirebase());
+                            URL imgUrl = imgUri.toURL();
                             InputStream is = imgUrl.openStream();
                             byte[] imgBytes = is.readAllBytes();
                             is.close();

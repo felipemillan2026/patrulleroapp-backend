@@ -55,6 +55,15 @@ public class TurnoController {
         return ResponseEntity.ok(turnoService.getPatrulleros());
     }
 
+    @GetMapping("/patrulleros-activos")
+    public ResponseEntity<?> getPatrullerosTurnoActivo() {
+        try {
+            return ResponseEntity.ok(turnoService.getPatrullerosTurnoActivo());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/ultimo-cerrado")
     public ResponseEntity<?> getUltimoCerrado() {
         try {

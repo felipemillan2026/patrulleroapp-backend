@@ -50,6 +50,17 @@ public class SolicitudController {
         }
     }
 
+    @PutMapping("/{id}/centralista")
+    public ResponseEntity<?> editarSolicitudCentralista(
+            @PathVariable Integer id,
+            @RequestBody SolicitudRequest request) {
+        try {
+            return ResponseEntity.ok(solicitudService.editarSolicitudCentralista(id, request));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> editarSolicitud(
             @PathVariable Integer id,

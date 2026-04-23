@@ -47,6 +47,7 @@ public class SolicitudService {
         solicitud.setLatitud(request.getLatitud());
         solicitud.setLongitud(request.getLongitud());
         solicitud.setDireccion(request.getDireccion());
+        solicitud.setNotas(request.getNotas());
         solicitud.setPatrullero(patrullero);
         solicitud.setTurno(turno);
         solicitud.setDepartamento(departamento);
@@ -106,6 +107,37 @@ public class SolicitudService {
             }
         }
 
+        return toResponse(solicitud);
+    }
+
+    public SolicitudResponse editarSolicitudCentralista(Integer id, SolicitudRequest request) {
+        Solicitud solicitud = solicitudRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+
+        if (request.getDescripcion() != null)
+            solicitud.setDescripcion(request.getDescripcion());
+
+        if (request.getDireccion() != null)
+            solicitud.setDireccion(request.getDireccion());
+
+        if (request.getNotas() != null)
+            solicitud.setNotas(request.getNotas());
+
+        if (request.getIdTiposCaso() != null && !request.getIdTiposCaso().isEmpty()) {
+            List<TipoCaso> tiposCaso = request.getIdTiposCaso().stream()
+                .map(tcId -> tipoCasoRepository.findById(tcId)
+                    .orElseThrow(() -> new RuntimeException("Tipo de caso no encontrado")))
+                .toList();
+            solicitud.setTiposCaso(tiposCaso);
+        }
+
+        if (request.getIdPatrullero() != null) {
+            Usuario patrullero = usuarioRepository.findById(request.getIdPatrullero())
+                .orElseThrow(() -> new RuntimeException("Patrullero no encontrado"));
+            solicitud.setPatrullero(patrullero);
+        }
+
+        solicitudRepository.save(solicitud);
         return toResponse(solicitud);
     }
 
@@ -169,9 +201,12 @@ public class SolicitudService {
             s.getLatitud(),
             s.getLongitud(),
             s.getPatrullero().getNombre() + " " + s.getPatrullero().getApellido(),
+            s.getPatrullero().getIdUsuario(),
             s.getDepartamento().getNombre(),
+            s.getDepartamento().getIdDepartamento(),
             tiposCaso,
-            urlsImagenes
+            urlsImagenes,
+            s.getNotas()
         );
     }
 }

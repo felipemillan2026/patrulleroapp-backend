@@ -97,6 +97,20 @@ public class TurnoService {
         );
     }
 
+    public List<PatrulleroDto> getPatrullerosTurnoActivo() {
+    Turno turno = turnoRepository.findByEstado("activo")
+        .orElseThrow(() -> new RuntimeException("No hay turno activo"));
+
+    return turnoPatrulleroRepository
+        .findByTurno_IdTurno(turno.getIdTurno()).stream()
+        .map(tp -> new PatrulleroDto(
+            tp.getPatrullero().getIdUsuario(),
+            tp.getPatrullero().getNombre(),
+            tp.getPatrullero().getApellido(),
+            tp.getPatrullero().getEmail()
+        )).toList();
+    }
+
     public TurnoResponse cerrarTurno() {
         Turno turno = turnoRepository.findByEstado("activo")
             .orElseThrow(() -> new RuntimeException("No hay turno activo"));

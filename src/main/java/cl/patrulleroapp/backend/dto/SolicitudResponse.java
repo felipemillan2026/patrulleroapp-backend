@@ -17,7 +17,10 @@ public class SolicitudResponse {
     private BigDecimal latitud;
     private BigDecimal longitud;
     private String patrulleroNombre;
+    private Integer patrulleroId;
     private String departamentoNombre;
+    private Integer departamentoId;
     private List<String> tiposCaso;
     private List<String> urlsImagenes;
+    private String notas;
 }
