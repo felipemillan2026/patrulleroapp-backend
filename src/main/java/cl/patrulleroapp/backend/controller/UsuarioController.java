@@ -49,4 +49,22 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/mi-perfil")
+public ResponseEntity<?> getMiPerfil() {
+    try {
+        return ResponseEntity.ok(usuarioService.getMiPerfil());
+    } catch (RuntimeException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+}
+
+@PutMapping("/mi-perfil")
+public ResponseEntity<?> actualizarMiPerfil(@RequestBody UsuarioRequest request) {
+    try {
+        return ResponseEntity.ok(usuarioService.actualizarMiPerfil(request));
+    } catch (RuntimeException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+}
 }

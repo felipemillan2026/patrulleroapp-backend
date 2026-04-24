@@ -82,4 +82,31 @@ public class UsuarioService {
             u.getActivo()
         );
     }
+
+    public UsuarioResponse getMiPerfil() {
+    String email = org.springframework.security.core.context.SecurityContextHolder
+        .getContext().getAuthentication().getName();
+    Usuario usuario = usuarioRepository.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    return toResponse(usuario);
+}
+
+public UsuarioResponse actualizarMiPerfil(UsuarioRequest request) {
+    String email = org.springframework.security.core.context.SecurityContextHolder
+        .getContext().getAuthentication().getName();
+    Usuario usuario = usuarioRepository.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+    if (request.getNombre() != null && !request.getNombre().isEmpty())
+        usuario.setNombre(request.getNombre());
+
+    if (request.getApellido() != null && !request.getApellido().isEmpty())
+        usuario.setApellido(request.getApellido());
+
+    if (request.getPassword() != null && !request.getPassword().isEmpty())
+        usuario.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+
+    usuarioRepository.save(usuario);
+    return toResponse(usuario);
+}
 }
