@@ -94,8 +94,9 @@ public class TurnoController {
     public ResponseEntity<?> getHistorial() {
         try {
             return ResponseEntity.ok(turnoService.getHistorial());
-    } catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         }
     }
+
 }
