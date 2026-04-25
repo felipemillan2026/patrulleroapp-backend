@@ -156,4 +156,19 @@ public class TurnoService {
                 u.getEmail()
             )).toList();
     }
-}
+
+    public List<TurnoResponse> getHistorial() {
+    return turnoRepository.findByEstadoOrderByFechaCierreDesc("cerrado")
+        .stream().map(t -> new TurnoResponse(
+            t.getIdTurno(),
+            t.getTipo(),
+            t.getEstado(),
+            t.getFechaInicio(),
+            t.getFechaCierre(),
+            t.getSupervisor().getNombre() + " " + t.getSupervisor().getApellido(),
+            List.of()
+  
+        )).toList();
+    }
+
+}    

@@ -89,4 +89,13 @@ public class TurnoController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/historial")
+    public ResponseEntity<?> getHistorial() {
+        try {
+            return ResponseEntity.ok(turnoService.getHistorial());
+    } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
 }
