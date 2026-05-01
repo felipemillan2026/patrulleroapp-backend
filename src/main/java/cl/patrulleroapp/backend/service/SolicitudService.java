@@ -55,18 +55,23 @@ public class SolicitudService {
         solicitudRepository.save(solicitud);
 
         // Guardar imágenes de Cloudinary
-        if (request.getUrlsImagenes() != null && !request.getUrlsImagenes().isEmpty()) {
-            for (String url : request.getUrlsImagenes()) {
+        List<String> urlsImagenes = request.getUrlsImagenes() != null
+            ? request.getUrlsImagenes() : List.of();
+
+        if (!urlsImagenes.isEmpty()) {
+            for (String url : urlsImagenes) {
                 Imagen imagen = new Imagen();
-                imagen.setUrlCloudinary(url);   // ← renombrado
+                imagen.setUrlCloudinary(url);
                 imagen.setFechaSubida(LocalDateTime.now());
                 imagen.setSolicitud(solicitud);
                 imagenRepository.save(imagen);
             }
         }
 
-        // Envío automático al correoDestino del departamento (async, no bloquea)
-        emailService.enviarNotificacionSolicitud(solicitud);
+        // Envío automático al correoDestino del departamento (async, no bloquea).
+        // Se pasan las URLs de Cloudinary para que se embeben como imágenes en el correo.
+        // El destinatario ve las fotos directamente sin necesitar credenciales del sistema.
+        emailService.enviarNotificacionSolicitud(solicitud, urlsImagenes);
 
         return toResponse(solicitud);
     }
@@ -97,11 +102,10 @@ public class SolicitudService {
 
         solicitudRepository.save(solicitud);
 
-        // Agregar nuevas imágenes si se adjuntan en la edición
         if (request.getUrlsImagenes() != null && !request.getUrlsImagenes().isEmpty()) {
             for (String url : request.getUrlsImagenes()) {
                 Imagen imagen = new Imagen();
-                imagen.setUrlCloudinary(url);   // ← renombrado
+                imagen.setUrlCloudinary(url);
                 imagen.setFechaSubida(LocalDateTime.now());
                 imagen.setSolicitud(solicitud);
                 imagenRepository.save(imagen);
@@ -117,10 +121,8 @@ public class SolicitudService {
 
         if (request.getDescripcion() != null)
             solicitud.setDescripcion(request.getDescripcion());
-
         if (request.getDireccion() != null)
             solicitud.setDireccion(request.getDireccion());
-
         if (request.getNotas() != null)
             solicitud.setNotas(request.getNotas());
 
@@ -185,7 +187,7 @@ public class SolicitudService {
             urlsImagenes = imagenRepository
                 .findBySolicitud_IdSolicitud(s.getIdSolicitud())
                 .stream()
-                .map(Imagen::getUrlCloudinary)  // ← renombrado
+                .map(Imagen::getUrlCloudinary)
                 .toList();
         } catch (Exception ignored) {}
 
