@@ -162,7 +162,7 @@ public class ReporteService {
 
                     for (Imagen imagen : imagenes) {
                         try {
-                            URI imgUri = new URI(imagen.getUrlFirebase());
+                            URI imgUri = new URI(imagen.getUrlCloudinary());
                             URL imgUrl = imgUri.toURL();
                             InputStream is = imgUrl.openStream();
                             byte[] imgBytes = is.readAllBytes();

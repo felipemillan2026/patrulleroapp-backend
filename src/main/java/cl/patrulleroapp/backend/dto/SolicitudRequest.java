@@ -12,9 +12,7 @@ public class SolicitudRequest {
     private String direccion;
     private Integer idDepartamento;
     private List<Integer> idTiposCaso;
-    private List<String> urlsImagenes;
-    private boolean notificarEmail;
-    private String emailDestino;
+    private List<String> urlsImagenes;  // URLs de Cloudinary
     private String notas;
-    private Integer idPatrullero;
+    private Integer idPatrullero;       // solo para uso del centralista al reasignar
 }

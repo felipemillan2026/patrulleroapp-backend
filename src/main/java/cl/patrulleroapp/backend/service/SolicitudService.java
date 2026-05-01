@@ -54,19 +54,19 @@ public class SolicitudService {
         solicitud.setTiposCaso(tiposCaso);
         solicitudRepository.save(solicitud);
 
+        // Guardar imágenes de Cloudinary
         if (request.getUrlsImagenes() != null && !request.getUrlsImagenes().isEmpty()) {
             for (String url : request.getUrlsImagenes()) {
                 Imagen imagen = new Imagen();
-                imagen.setUrlFirebase(url);
+                imagen.setUrlCloudinary(url);   // ← renombrado
                 imagen.setFechaSubida(LocalDateTime.now());
                 imagen.setSolicitud(solicitud);
                 imagenRepository.save(imagen);
             }
         }
 
-        if (request.isNotificarEmail()) {
-            emailService.enviarNotificacionSolicitud(solicitud, request.getEmailDestino());
-        }
+        // Envío automático al correoDestino del departamento (async, no bloquea)
+        emailService.enviarNotificacionSolicitud(solicitud);
 
         return toResponse(solicitud);
     }
@@ -97,10 +97,11 @@ public class SolicitudService {
 
         solicitudRepository.save(solicitud);
 
+        // Agregar nuevas imágenes si se adjuntan en la edición
         if (request.getUrlsImagenes() != null && !request.getUrlsImagenes().isEmpty()) {
             for (String url : request.getUrlsImagenes()) {
                 Imagen imagen = new Imagen();
-                imagen.setUrlFirebase(url);
+                imagen.setUrlCloudinary(url);   // ← renombrado
                 imagen.setFechaSubida(LocalDateTime.now());
                 imagen.setSolicitud(solicitud);
                 imagenRepository.save(imagen);
@@ -132,9 +133,9 @@ public class SolicitudService {
         }
 
         if (request.getIdPatrullero() != null) {
-            Usuario patrullero = usuarioRepository.findById(request.getIdPatrullero())
+            Usuario pat = usuarioRepository.findById(request.getIdPatrullero())
                 .orElseThrow(() -> new RuntimeException("Patrullero no encontrado"));
-            solicitud.setPatrullero(patrullero);
+            solicitud.setPatrullero(pat);
         }
 
         solicitudRepository.save(solicitud);
@@ -177,20 +178,16 @@ public class SolicitudService {
                     .map(TipoCaso::getDescripcion)
                     .toList();
             }
-        } catch (Exception e) {
-            tiposCaso = List.of();
-        }
+        } catch (Exception ignored) {}
 
         List<String> urlsImagenes = List.of();
         try {
-            List<Imagen> imagenes = imagenRepository
-                .findBySolicitud_IdSolicitud(s.getIdSolicitud());
-            urlsImagenes = imagenes.stream()
-                .map(Imagen::getUrlFirebase)
+            urlsImagenes = imagenRepository
+                .findBySolicitud_IdSolicitud(s.getIdSolicitud())
+                .stream()
+                .map(Imagen::getUrlCloudinary)  // ← renombrado
                 .toList();
-        } catch (Exception e) {
-            urlsImagenes = List.of();
-        }
+        } catch (Exception ignored) {}
 
         return new SolicitudResponse(
             s.getIdSolicitud(),
