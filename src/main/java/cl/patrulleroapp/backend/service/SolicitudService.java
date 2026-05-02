@@ -164,6 +164,16 @@ public class SolicitudService {
             .stream().map(this::toResponse).toList();
     }
 
+
+    public List<SolicitudResponse> getSolicitudesPorTurno(Integer idTurno) {
+        // Retorna todas las solicitudes de un turno específico (activo o cerrado).
+        // Permite al supervisor consultar procedimientos de turnos anteriores
+        // sin importar cuánto tiempo haya pasado desde el cierre.
+        return solicitudRepository
+            .findByTurno_IdTurno(idTurno)
+            .stream().map(this::toResponse).toList();
+    }
+
     public SolicitudResponse actualizarEstado(Integer id, String estado) {
         Solicitud solicitud = solicitudRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));

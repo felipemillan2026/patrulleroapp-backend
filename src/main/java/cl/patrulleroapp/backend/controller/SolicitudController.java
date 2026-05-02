@@ -39,6 +39,17 @@ public class SolicitudController {
         }
     }
 
+    // Endpoint para consultar solicitudes de cualquier turno (activo o cerrado).
+    // Permite al supervisor revisar procedimientos históricos sin límite de tiempo.
+    @GetMapping("/turno/{idTurno}")
+    public ResponseEntity<?> getSolicitudesPorTurno(@PathVariable Integer idTurno) {
+        try {
+            return ResponseEntity.ok(solicitudService.getSolicitudesPorTurno(idTurno));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}/estado")
     public ResponseEntity<?> actualizarEstado(
             @PathVariable Integer id,
@@ -69,5 +80,6 @@ public class SolicitudController {
             return ResponseEntity.ok(solicitudService.editarSolicitud(id, request));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-    }   }
+        }
+    }
 }
